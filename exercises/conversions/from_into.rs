@@ -33,18 +33,51 @@ impl Default for Person {
 // If while parsing the age, something goes wrong, then return the default of Person
 // Otherwise, then return an instantiated Person object with the results
 
-// I AM NOT DONE
-
 impl From<&str> for Person {
     fn from(s: &str) -> Person {
+        let mut p = Person::default();
+
+        if !s.is_empty() {
+            let split_s = s.split(',').collect::<Vec<&str>>();
+            if split_s.len() > 1 {
+                let name = split_s[0].to_string();
+                let age = split_s[1].parse::<i64>().unwrap_or(-1);
+                if !name.is_empty() && age > 0 {
+                    p.name = name;
+                    p.age = age as usize;
+                }
+            }
+
+            /* approach 1 (with a bug: if age = 30 is given?)
+            let mut split_s = s.split(',');
+            let mut pname = p.name.clone();
+            let mut page = p.age;
+            if let Some(name) = split_s.next() {
+                pname = name.into();
+            }
+            if let Some(age) = split_s.next() {
+                page = age.parse().unwrap_or(p.age);
+            }
+
+            if !pname.is_empty() && page != p.age {
+                p.name = pname;
+                p.age = page;
+            }
+            */
+        }
+
+        p
     }
 }
 
 fn main() {
+    // Use the default function
+    let p0 = Person::default();
     // Use the `from` function
     let p1 = Person::from("Mark,20");
     // Since From is implemented for Person, we should be able to use Into
     let p2: Person = "Gerald,70".into();
+    println!("{:?}", p0);
     println!("{:?}", p1);
     println!("{:?}", p2);
 }
